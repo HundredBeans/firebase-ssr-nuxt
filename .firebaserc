@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "firebase-ssr-dev",
-    "main": "firebase-ssr-prod",
-    "develop": "firebase-ssr-dev"
+    "default": "invitreeid-v2-dev",
+    "main": "invitreeid-v2-dev",
+    "develop": "invitreeid-v2-dev"
   }
 }
