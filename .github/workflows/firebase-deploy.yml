@@ -1,0 +1,45 @@
+name: Deploy to Firebase Hosting and Functions
+'on':
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      # Open UI directory and run build
+      - name: Build UI
+        run: cd src && yarn install --frozen-lockfile && yarn build
+      # Back to root directory before executing the next steps
+      - name: Back to root directory
+        run: cd ..
+      # Delete the previous file first and Copy build files to functions folder
+      - name: Copy build files to functions folder
+        run: rm -rf functions/nuxt && cp -R src/.nuxt functions/nuxt
+      # Copy static files to public folder
+      - name: Copy static assets to public folder
+        run: rm -rf public && cp -R src/static public
+      # Copy dist files inside nuxt folder to public/assets
+      - name: Copy build assets to public/assets
+        run: rm -rf public/assets && cp -R functions/nuxt/dist public/assets
+      # Build functions
+      - name: Build Functions
+        run: cd functions && npm install
+      # Use specific project such as production, staging, or development based on branch 
+      - name: Use Specific Project Based on Current Branch
+        uses: w9jds/firebase-action@master
+        with:
+          args: use ${{ github.ref_name }}
+        env:
+            FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      # Start deploy to firebase
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting:firebase-ssr,functions:ssr
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
