@@ -3,7 +3,7 @@
     "source": "functions"
   },
   "hosting": {
-    "site": "firebase-ssr",
+    "site": "invitree-app-sample",
     "public": "public",
     "ignore": [
       "firebase.json",
